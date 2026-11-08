@@ -30,7 +30,7 @@ const profiles=[
 ['Reflective uncertainty','An inward-looking state in which important questions are open and your feelings are still taking shape.','You may be exploring your direction without a single dominant emotion. Uncertainty does not have to mean that something is wrong.',[2,2,1,2,3,1,1,0,3,3]]
 ].map(([name,description,meaning,vector])=>({name,description,meaning,vector}));
 const weights=[1.6,.9,1.2,1.1,1.4,1.3,1.1,1.1,1.2,.8];
-function rank(answers){if(!Array.isArray(answers)||answers.length!==10||answers.some(a=>!Number.isInteger(a)||a<0||a>4))throw new Error('Please answer all ten questions with a value from 0 to 4.');return profiles.map(p=>({...p,distance:p.vector.reduce((s,v,i)=>s+weights[i]*(v-answers[i])**2,0)/weights.reduce((a,b)=>a+b,0)})).sort((a,b)=>a.distance-b.distance);}
+function rank(answers){if(!Array.isArray(answers)||answers.length!==questions.length||Array.from(answers).some(a=>!Number.isInteger(a)||a<0||a>4))throw new Error('Please answer all ten questions with a value from 0 to 4.');return profiles.map(p=>({...p,distance:p.vector.reduce((s,v,i)=>s+weights[i]*(v-answers[i])**2,0)/weights.reduce((a,b)=>a+b,0)})).sort((a,b)=>a.distance-b.distance);}
 function explain(answers,profile){return questions.map((q,i)=>({text:q.signal[answers[i]>=2?1:0],strength:Math.abs(answers[i]-2)*weights[i]/(1+Math.abs(answers[i]-profile.vector[i]))})).filter(x=>x.strength>.5).sort((a,b)=>b.strength-a.strength).slice(0,3).map(x=>x.text);}
 root.EmotionModel={questions,profiles,rank,explain};
 })(typeof module==='object'?module.exports:window);
